@@ -8,8 +8,6 @@ class Element:
         self.right = None
 class RDtree:
     root = None
-    def set_compare(self, set1, set2):
-        return len(set1.intersection(set2))
     def get_element_data(self, data):
         return Element(data)
     def insert(self, element, data: set):
@@ -18,7 +16,7 @@ class RDtree:
         self.root = element
 
         if not self.is_child(element):
-            if len(element.element.left.data.intersection(data)) > len(element.element.right.data.intersection(data)):
+            if len(element.left.data.intersection(data)) > len(element.right.data.intersection(data)):
                 element.data = element.data.union(data)
                 self.insert(element.left, data)
             else:
