@@ -1,5 +1,5 @@
-import parcer
-
-int =parcer.Interpreter
-text=input()
-text=int.interpreter(int,text)
+from parcer import *
+ob=Interpreter('text')
+while True:
+    ob.interpreter(input())
+        
