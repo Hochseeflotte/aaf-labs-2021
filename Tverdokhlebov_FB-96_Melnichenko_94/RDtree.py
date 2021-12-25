@@ -1,5 +1,4 @@
-
-from pptree import *
+import collections
 
 class Element:
     def __init__(self, value: set):
@@ -8,6 +7,8 @@ class Element:
         self.right = None
 class RDtree:
     root = None
+    l=[]
+    m=[]
     def get_element_data(self, data):
         return Element(data)
     def insert(self, element, data: set):
@@ -45,12 +46,12 @@ class RDtree:
         tree_dict=tree
         self.print_tree(tree_dict, str(element.data))
 
-    def print_tree(self, tree, root, *, indent=0, criteria=None):
+    def print_tree(self, tree, root, *, criteria=None):
         depth, branch, visited = criteria or (0, [], set())
         if root not in tree:
             return
         if depth == 0:
-            print(" " * indent + root)
+            print(" "  + root)
         visited |={root}
         branch += [None]
         fork=len(set(tree[root]) - visited)
@@ -58,8 +59,57 @@ class RDtree:
             fork -=1
             branch[depth] = ("├──" if fork else "└──")
             if visited_elem in visited: continue
-            print(" " * indent + "".join(branch) + visited_elem)
+            print(" " + "".join(branch) + visited_elem)
             if visited_elem in tree:
                 branch[depth]=("│   "if fork else "    ")
                 new_creteria = depth+1, branch.copy(),visited.copy()
-                self.print_tree(tree,visited_elem, indent=indent, criteria= new_creteria)
+                self.print_tree(tree,visited_elem,  criteria= new_creteria)
+    
+    def tree_search(self, element, value: set):
+        if(element==None): return False
+        if(element.data==value): return True
+        res1 =self.tree_search(element.left, value)
+        if res1: return True
+        res2 = self.tree_search(element.right, value)
+        return res2
+    
+    def search_where_intersects(self, element, value):
+        if(set(value).intersection(element.data)): return True
+        res1 = self.search_where_intersects(element.left, value)
+        if res1: return True
+        res2= self.search_where_intersects(element.right, value)
+        return res2
+        
+
+        
+    def inorder(self, element):
+        res=[]
+        if not self.is_child(element):
+            res.append(list(element.data))
+            res = res + self.inorder(element.left)
+            res = res + self.inorder(element.right)
+            # res= self.inorder(element.left)
+            # res.append(list(element.data))
+            # res= res + self.inorder(element.right)
+        return res
+    
+    def search_where_contains(self, element, value):
+        # res=self.inorder(element)
+        # print(res)
+        # for i in res:
+        #     if set(value).issubset(element.data): print(list(i))
+        if(set(value).issubset(element.data)): return True
+        res1 = self.search_where_contains(element.left, value)
+        if res1: return True
+        res2= self.search_where_contains(element.right, value)
+        return res2
+
+    def search_where_contained_by(self,element, value):
+        if(set(value).issuperset(element.data)): return True
+        res1 = self.search_where_contained_by(element.left, value)
+        if res1: return True
+        res2= self.search_where_contained_by(element.right, value)
+        return res2
+
+
+
